@@ -27,3 +27,10 @@ function getRequiredProperty_(name) {
 function getSpreadsheet_() {
   return SpreadsheetApp.openById(getRequiredProperty_('SPREADSHEET_ID'));
 }
+
+function setPwaBaseUrl_(value) {
+  var url = String(value || '').replace(/\/$/, '');
+  if (!/^https:\/\//.test(url)) throw apiError_('INVALID_URL', 'Adresa PWA musí používat HTTPS.');
+  PropertiesService.getScriptProperties().setProperty('PWA_BASE_URL', url);
+  return { pwaBaseUrl: url };
+}

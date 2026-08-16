@@ -2,8 +2,10 @@ import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+const basePath = process.env.VITE_BASE_PATH || '/Pripomen_mi/'
+
 export default defineConfig({
-  base: '/Pripomen_mi/',
+  base: basePath,
   plugins: [
     react(),
     VitePWA({
@@ -13,7 +15,7 @@ export default defineConfig({
       filename: 'sw.ts',
       includeAssets: ['icon.svg', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'],
       manifest: {
-        id: '/Pripomen_mi/',
+        id: basePath,
         name: 'Připomeň mi',
         short_name: 'Připomeň mi',
         description: 'Rychlé hlasové připomínky',
@@ -21,8 +23,8 @@ export default defineConfig({
         background_color: '#f7f3eb',
         display: 'standalone',
         orientation: 'portrait-primary',
-        start_url: '/Pripomen_mi/',
-        scope: '/Pripomen_mi/',
+        start_url: basePath,
+        scope: basePath,
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
@@ -32,7 +34,7 @@ export default defineConfig({
           {
             name: 'Nová hlasová připomínka',
             short_name: 'Mluvit',
-            url: '/Pripomen_mi/voice',
+            url: `${basePath}voice`,
             icons: [{ src: 'icon-192.png', sizes: '192x192', type: 'image/png' }]
           }
         ]

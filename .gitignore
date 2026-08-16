@@ -7,7 +7,9 @@ coverage/
 .clasp.json
 .local-secrets.json
 .fcm-service-account.json
+.firebase-hosting-service-account.json
 firebase-debug.log
+.firebase/
 *.tsbuildinfo
 vite.config.js
 vite.config.d.ts

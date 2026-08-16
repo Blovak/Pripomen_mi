@@ -2,6 +2,7 @@ function routeRequest_(request) {
   var payload = request.payload || {};
   switch (request.action) {
     case 'setupProject': return setupProject();
+    case 'setPwaBaseUrl': return setPwaBaseUrl_(payload.pwaBaseUrl);
     case 'listReminders': return listReminders_(payload);
     case 'getReminder': return getReminder_(payload.id, payload.userId);
     case 'createReminder': return createReminder_(payload.reminder, payload.requestId);

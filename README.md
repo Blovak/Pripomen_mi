@@ -1,5 +1,7 @@
 # Připomeň mi
 
+Produkční PWA: **https://pripomen-mi-blovak.web.app/**
+
 Mobile-first hlasová PWA pro rychlé české připomínky. Frontend funguje bez App
 Store, připomínky ukládá do Google Sheets přes Apps Script a push posílá přes FCM.
 Bez připojení se změny ukládají do IndexedDB a odešlou se po návratu online.
@@ -48,6 +50,10 @@ Properties.
 
 Přímou cestu `https://blovak.github.io/Pripomen_mi/voice` obsluhuje GitHub Pages
 fallback `404.html`, který zachová route a předá ji React routeru.
+
+Stejný workflow nasazuje také Firebase Hosting na primární mobilní adresu
+`https://pripomen-mi-blovak.web.app/`. Firebase používá SPA rewrite, takže `/`,
+`/index.html` i `/voice` odpovídají přímo bez GitHub Pages fallbacku.
 
 ## Ruční akceptační test
 
