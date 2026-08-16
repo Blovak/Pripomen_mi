@@ -5,6 +5,9 @@ dist/
 .DS_Store
 coverage/
 .clasp.json
+.local-secrets.json
+.fcm-service-account.json
+firebase-debug.log
 *.tsbuildinfo
 vite.config.js
 vite.config.d.ts
