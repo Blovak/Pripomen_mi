@@ -10,6 +10,7 @@ describe('ConversationEngine', () => {
     expect(engine.answer('Zítra').state).toBe('WAITING_FOR_TIME')
     const result = engine.answer('V devět')
     expect(result.state).toBe('WAITING_FOR_CONFIRMATION')
+    expect(result.prompt).toBeNull()
     expect(result.draft).toMatchObject({ title: 'Zavolat Petrovi', dateTime: '2026-08-17T09:00:00+02:00' })
   })
 

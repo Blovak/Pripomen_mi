@@ -16,7 +16,7 @@ function nextState(draft: ParsedReminder): Pick<ConversationSnapshot, 'state' | 
   if (draft.missingFields.includes('TITLE')) return { state: 'WAITING_FOR_TITLE', prompt: 'Co ti mám připomenout?' }
   if (draft.missingFields.includes('DATE')) return { state: 'WAITING_FOR_DATE', prompt: 'Kdy ti to mám připomenout?' }
   if (draft.missingFields.includes('TIME')) return { state: 'WAITING_FOR_TIME', prompt: 'V kolik hodin?' }
-  return { state: 'WAITING_FOR_CONFIRMATION', prompt: 'Mám připomínku uložit?' }
+  return { state: 'WAITING_FOR_CONFIRMATION', prompt: null }
 }
 
 export class ConversationEngine {
