@@ -15,17 +15,26 @@ const WEEKDAYS: Record<string, number> = {
 }
 
 const COMMAND_PATTERNS = [
-  /(?<!\p{L})prosím(?=$|[^\p{L}])/giu,
-  /(?<!\p{L})připomeň(?:te)?(?:\s+mi)?(?=$|[^\p{L}])/giu,
-  /(?<!\p{L})ať\s+nezapomenu(?=$|[^\p{L}])/giu,
+  /(?<!\p{L})pros(?:í|i)m(?=$|[^\p{L}])/giu,
+  /(?<!\p{L})p(?:ř|r)ipome(?:ň|n)(?:te)?(?:\s+mi)?(?=$|[^\p{L}])/giu,
+  /(?<!\p{L})a(?:ť|t)\s+nezapomenu(?=$|[^\p{L}])/giu,
 ]
 
 const parseNumber = (value: string) => /^\d+$/.test(value) ? Number(value) : NUMBER_WORDS[value.toLocaleLowerCase('cs-CZ')]
 const parseClockNumber = (value: string) => {
   const normalized = value.toLocaleLowerCase('cs-CZ')
-  const inflected: Record<string, number> = { jedné: 1, dvou: 2, třech: 3, čtyřech: 4, pěti: 5, šesti: 6, sedmi: 7, osmi: 8, devíti: 9, desíti: 10 }
+  const inflected: Record<string, number> = {
+    jedné: 1, první: 1, dvou: 2, druhé: 2, třech: 3, třetí: 3,
+    čtyřech: 4, čtvrté: 4, pěti: 5, páté: 5, šesti: 6, šesté: 6,
+    sedmi: 7, sedmé: 7, osmi: 8, osmé: 8, devíti: 9, deváté: 9,
+    desíti: 10, desáté: 10, jedenácté: 11, dvanácté: 12, třinácté: 13,
+    čtrnácté: 14, patnácté: 15, šestnácté: 16, sedmnácté: 17,
+    osmnácté: 18, devatenácté: 19, dvacáté: 20,
+  }
   return parseNumber(normalized) ?? inflected[normalized]
 }
+
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 function cleanTitle(input: string, consumed: RegExp[]) {
   let title = input
@@ -89,14 +98,16 @@ export function parseCzechReminder(text: string, options: ParserOptions = {}): P
   }
 
   if (!time) {
-    const clock = normalized.match(/\bv\s+(\d{1,2}|[\p{L}]+)(?::|\.)(\d{2})\b/u)
-      ?? normalized.match(/\bv\s+(\d{1,2}|[\p{L}]+)(?:\s+hodin(?:u|y)?)?\b/u)
+    const clock = normalized.match(/(?<!\p{L})(?:v|ve|o)\s+(\d{1,2}|[\p{L}]+)\s*(?::|\.)\s*(\d{1,2})(?!\d)/u)
+      ?? normalized.match(/(?<!\p{L})(?:v|ve|o)\s+(\d{1,2})\s+(\d{2})(?!\d)/u)
+      ?? normalized.match(/(?<!\p{L})(?:v|ve|o)\s+(\d{1,2}|[\p{L}]+)(?:\s+hodin(?:u|y)?)?(?=$|[^\p{L}\d])/u)
+      ?? normalized.match(/(?<![\d:])(\d{1,2}):(\d{2})(?!\d)/u)
     if (clock) {
       const hour = parseClockNumber(clock[1])
       const minute = clock[2] ? Number(clock[2]) : 0
       if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
         time = { hour, minute }
-        consumed.push(new RegExp(clock[0], 'giu'))
+        consumed.push(new RegExp(escapeRegExp(clock[0]), 'giu'))
       }
     }
   }

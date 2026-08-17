@@ -19,4 +19,13 @@ describe('ConversationEngine', () => {
     expect(engine.confirm().state).toBe('SAVING')
     expect(engine.done().state).toBe('DONE')
   })
+
+  it('nežádá znovu čas u fráze dnes v 11:00', () => {
+    const engine = new ConversationEngine(options)
+    const result = engine.start('Připomeň mi schůzku s Karlem dnes v 11:00')
+    expect(result.state).toBe('WAITING_FOR_CONFIRMATION')
+    expect(result.draft).toMatchObject({
+      title: 'Schůzku s Karlem', dateTime: '2026-08-16T11:00:00+02:00', missingFields: [],
+    })
+  })
 })

@@ -10,6 +10,29 @@ describe('parseCzechReminder', () => {
     })
   })
 
+  it('parsuje přesnou hlasovou frázi dnes v 11:00', () => {
+    expect(parseCzechReminder('Připomeň mi schůzku s Karlem dnes v 11:00', options)).toMatchObject({
+      title: 'Schůzku s Karlem', dateTime: '2026-08-16T11:00:00+02:00', missingFields: [],
+    })
+  })
+
+  it.each([
+    'Připomeň mi schůzku s Karlem dnes o 11:00',
+    'Připomeň mi schůzku s Karlem dnes v 11 00',
+    'Připomeň mi schůzku s Karlem dnes v jedenácté',
+    'Připomeň mi schůzku s Karlem dnes 11:00',
+  ])('parsuje hlasovou variantu času: %s', (text) => {
+    expect(parseCzechReminder(text, options)).toMatchObject({
+      title: 'Schůzku s Karlem', dateTime: '2026-08-16T11:00:00+02:00', missingFields: [],
+    })
+  })
+
+  it('parsuje stejný příkaz i bez diakritiky', () => {
+    expect(parseCzechReminder('Pripomen mi schuzku s Karlem dnes v 11:00', options)).toMatchObject({
+      title: 'Schuzku s Karlem', dateTime: '2026-08-16T11:00:00+02:00', missingFields: [],
+    })
+  })
+
   it('parsuje relativních 20 minut', () => {
     expect(parseCzechReminder('za 20 minut vypnout troubu', options)).toMatchObject({
       title: 'Vypnout troubu', dateTime: '2026-08-16T10:20:00+02:00', missingFields: [],
