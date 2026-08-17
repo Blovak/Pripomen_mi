@@ -1,6 +1,5 @@
 function getFcmAccessToken_() {
   var serviceAccount = JSON.parse(getRequiredProperty_('FCM_SERVICE_ACCOUNT_JSON'));
-  var pwaBaseUrl = getRequiredProperty_('PWA_BASE_URL').replace(/\/$/, '');
   var now = Math.floor(Date.now() / 1000);
   var header = { alg: 'RS256', typ: 'JWT' };
   var claim = {
@@ -29,6 +28,7 @@ function base64Url_(value) {
 function sendReminderPush_(reminder, devices) {
   if (!devices.length) throw apiError_('NO_ACTIVE_DEVICE', 'Není zaregistrované žádné aktivní zařízení.');
   var serviceAccount = JSON.parse(getRequiredProperty_('FCM_SERVICE_ACCOUNT_JSON'));
+  var pwaBaseUrl = getRequiredProperty_('PWA_BASE_URL').replace(/\/$/, '');
   var accessToken = getFcmAccessToken_();
   var endpoint = 'https://fcm.googleapis.com/v1/projects/' + serviceAccount.project_id + '/messages:send';
   var successes = 0;
