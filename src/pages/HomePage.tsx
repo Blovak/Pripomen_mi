@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { MicrophoneButton } from '../components/MicrophoneButton'
 import { useReminders } from '../context/RemindersContext'
 import type { Reminder } from '../models/reminder'
@@ -14,7 +14,6 @@ export function HomePage() {
   const engine = useRef(new ConversationEngine({ timezone: 'Europe/Prague' }))
   const speech = useMemo(() => new BrowserSpeechRecognitionService(), [])
   const { create, offline } = useReminders()
-  const navigate = useNavigate()
   const [listening, setListening] = useState(false)
   const [processing, setProcessing] = useState(false)
   const [text, setText] = useState('')
@@ -41,9 +40,9 @@ export function HomePage() {
     setConversation(engine.current.confirm()); setProcessing(true); setError(null)
     try {
       await create(reminder)
-      const done = engine.current.done(); setConversation(done)
       speak(`Dobře. Připomenu ti ${draft.title}.`)
-      window.setTimeout(() => navigate(`/reminders/${reminder.id}`), 650)
+      setConversation(engine.current.reset())
+      setTranscript('')
     } catch (reason) {
       setConversation(engine.current.reset())
       setError(reason instanceof ApiError && reason.code === 'DUPLICATE_REMINDER'
@@ -78,7 +77,6 @@ export function HomePage() {
     } finally { setListening(false) }
   }
 
-  const reset = () => { setConversation(engine.current.reset()); setTranscript(''); setError(null) }
   const canInput = !processing && conversation.state !== 'SAVING' && conversation.state !== 'DONE'
   const status = listening ? 'Poslouchám…' : processing ? 'Zpracovávám…'
     : conversation.state.startsWith('WAITING_FOR_') ? 'Čekám na doplnění…' : conversation.state === 'DONE' ? 'Hotovo' : 'Připraveno'
@@ -92,7 +90,6 @@ export function HomePage() {
       {!conversation.draft && <p className="hint">Třeba „Zítra v devět zavolat Petrovi.“</p>}
       {transcript && <blockquote className="transcript">„{transcript}“</blockquote>}
       {canInput && <MicrophoneButton listening={listening} onClick={listen} />}
-      {conversation.state === 'DONE' && <button type="button" className="wide-button compact" onClick={reset}>Přidat další</button>}
       {error && <div className="error-message" role="alert">{error}</div>}
       {canInput && (
         <form className="manual-input" onSubmit={(event) => { event.preventDefault(); acceptText(text) }}>

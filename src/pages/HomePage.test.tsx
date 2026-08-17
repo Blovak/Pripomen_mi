@@ -20,7 +20,7 @@ describe('HomePage', () => {
     speakMock.mockReset()
   })
 
-  it('úplnou připomínku uloží bez potvrzovací otázky', async () => {
+  it('úplnou připomínku uloží bez potvrzení a zůstane připravená na další', async () => {
     render(<MemoryRouter><HomePage /></MemoryRouter>)
 
     fireEvent.change(screen.getByLabelText('Nebo odpověď napiš'), {
@@ -31,6 +31,15 @@ describe('HomePage', () => {
     await waitFor(() => expect(createMock).toHaveBeenCalledTimes(1))
     expect(screen.queryByRole('button', { name: 'Uložit připomínku' })).toBeNull()
     expect(screen.queryByText('Mám připomínku uložit?')).toBeNull()
-    await waitFor(() => expect(screen.queryByText(/Připomínka je uložená/)).not.toBeNull())
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Co ti mám připomenout?' })).toBeTruthy())
+    expect(screen.getByLabelText<HTMLInputElement>('Nebo odpověď napiš').disabled).toBe(false)
+    expect(screen.queryByText(/Připomínka je uložená/)).toBeNull()
+
+    fireEvent.change(screen.getByLabelText('Nebo odpověď napiš'), {
+      target: { value: 'Připomeň mi zavolat Petrovi zítra v 12:00' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Pokračovat' }))
+
+    await waitFor(() => expect(createMock).toHaveBeenCalledTimes(2))
   })
 })
